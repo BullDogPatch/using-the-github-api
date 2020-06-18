@@ -1,9 +1,41 @@
+h1 {
+  font-family: "Courier New", Courier, monospace;
+  font-weight: bold;
+}
+
 #repoDiv {
   padding: 15px;
   line-height: 1.7;
 }
 
 a {
-  color: darkseagreen;
+  color: #000;
   text-decoration: none;
+  font-family: "Courier New", Courier, monospace;
+  font-weight: bold;
+}
+
+button {
+  border: 2px solid black;
+  border-radius: 4px;
+  width: 75px;
+  height: 30px;
+  margin: 10px;
+  color: red;
+  text-transform: uppercase;
+}
+
+.pagination {
+  border: 2px solid black;
+  border-radius: 4px;
+  width: 110px;
+  height: 30px;
+  margin: 10px;
+  color: red;
+  text-transform: uppercase;
+}
+
+button:hover {
+  background-color: darkslategray;
+  color: white;
 }

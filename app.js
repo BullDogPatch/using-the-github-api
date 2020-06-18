@@ -6,7 +6,7 @@ const commitsBtn = document.querySelector("#commitsBtn");
 const repoResults = document.querySelector("#repoDiv");
 btnRepos.addEventListener("click", getRepos);
 issuesBtn.addEventListener("click", getIssues);
-commitsBtn.addEventListener("click", getCommits);
+commitsBtn.addEventListener("click", (e) => getCommits());
 
 async function getRepos() {
   clear();
@@ -25,10 +25,12 @@ async function getRepos() {
   });
 }
 
-async function getCommits() {
+async function getCommits(
+  url = "https://api.github.com/search/commits?q=repo:freecodecamp/freecodecamp author-date:2019-03-01..2020-06-17"
+) {
   clear();
-  const url =
-    "https://api.github.com/search/commits?q=repo:freecodecamp/freecodecamp author-date:2019-03-01..2020-06-17";
+  // const url =
+  //   "https://api.github.com/search/commits?q=repo:freecodecamp/freecodecamp author-date:2019-03-01..2020-06-17";
   const headers = {
     Accept: "application/vnd.github.cloak-preview",
   };
@@ -36,6 +38,17 @@ async function getCommits() {
     method: "GET",
     headers: headers,
   });
+  // <https://api.github.com/search/commits?q=repo%3Afreecodecamp%2Ffreecodecamp+author-date%3A2019-03-01..2020-06-17&page=2>; rel="next", <https://api.github.com/search/commits?q=repo%3Afreecodecamp%2Ffreecodecamp+author-date%3A2019-03-01..2020-06-17&page=34>; rel="last"
+
+  const link = response.headers.get("link");
+  const links = link.split(",");
+  const urls = links.map((a) => {
+    return {
+      url: a.split(";")[0].replace(">", "").replace("<", ""),
+      title: a.split(";")[1],
+    };
+  });
+
   const result = await response.json();
   console.log(result);
 
@@ -47,11 +60,19 @@ async function getCommits() {
     img.style.padding = "10px";
     const anchor = document.createElement("a");
     anchor.href = item.html_url;
-    anchor.textContent = item.commit.message;
+    anchor.textContent = item.commit.message.substr(0, 120) + "....";
     repoResults.appendChild(img);
     repoResults.appendChild(anchor);
 
     repoResults.appendChild(document.createElement("br"));
+  });
+
+  urls.forEach((url) => {
+    const btn = document.createElement("button");
+    btn.classList.add("pagination");
+    btn.textContent = url.title;
+    btn.addEventListener("click", (e) => getCommits(url.url));
+    repoResults.appendChild(btn);
   });
 }
 
